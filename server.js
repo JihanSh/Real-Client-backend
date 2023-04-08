@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import connectDB from './config/db.js';
 import cors from 'cors';
+import auth from './routes/Route.js';
 
 dotenv.config();
 
@@ -17,11 +18,10 @@ if (process.env.NODE_ENV === "development"){
 }
 
 app.use(express.json());
+app.use(express.urlencoded());
 app.use(cors());
+app.use("/api/", auth);
 
-app.get('/', (req, res) => {
-   res.send('API is running...')
-});
 
 
 // calling routes 
