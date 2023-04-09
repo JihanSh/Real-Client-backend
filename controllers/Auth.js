@@ -39,21 +39,15 @@ export const register = async (req, res, next) => {
 // login
 export const login = async (req, res, next) => {
   // Check if username and password is provided
-  if (!username || !password) {
+  if (!req.body.username || !req.body.password) {
     return res.status(400).json({
       message: "Username or Password not present",
     });
-  }
+  }else
   try {
-    const user = await User.findOne({ username });
-    if (!user) {  
-      res.status(400).json({
-        message: "Login not successful",
-        error: "User not found",
-      });
-    } else {
+    const user = await User.findOne({ username:req.body.username});
       // comparing given password with hashed password
-      bcrypt.compare(password, user.password).then(function (result) {
+      bcrypt.compare(req.body.password, user.password).then(function (result) {
         result
           ? res.status(200).json({
               message: "Login successful",
@@ -61,7 +55,7 @@ export const login = async (req, res, next) => {
             })
           : res.status(400).json({ message: "Login not succesful" });
       });
-    }
+    
   } catch (error) {
     res.status(400).json({
       message: "An error occurred",
