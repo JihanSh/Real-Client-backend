@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import connectDB from './config/db.js';
 import cors from 'cors';
+import bodyParser from "body-parser";
+import categoriesRoute from './Routes/Categories.js'
 
 dotenv.config();
 
@@ -11,6 +13,10 @@ await connectDB();
 const PORT = process.env.PORT || 5000;
 
 const app = new express();
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 
 if (process.env.NODE_ENV === "development"){
    app.use(morgan('dev'));
@@ -25,7 +31,7 @@ app.get('/', (req, res) => {
 
 
 // calling routes 
-
+app.use('/categories', categoriesRoute);
 
 
 
