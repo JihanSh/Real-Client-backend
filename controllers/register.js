@@ -24,7 +24,12 @@ if (!req.body.phonenumber || !req.body.password || !req.body.username) {
       message: "User not successfully created",newUser,
       error: err.message,
     });
- }
-};
+ }};
+
+    
+
+
+
 
 export default register;
+
