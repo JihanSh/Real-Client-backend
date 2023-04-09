@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import connectDB from './config/db.js';
 import cors from 'cors';
+import productRouter from './routes/productRoute.js'
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ app.get('/', (req, res) => {
 
 
 // calling routes 
-
+app.use('/products', productRouter);
 
 
 
