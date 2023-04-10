@@ -20,18 +20,22 @@ const productSchema = new Schema (
             ref: 'Category',
             required: [true, "Please include the product category"],
         },
+        subcategory:{
+            type: Schema.Types.ObjectId,
+            ref: 'Subcategory',
+            required: [true, "Please include the product subcategory"],
+        },
         price: {
+            type: Number,
+            required: [true, "Please include the product price"],
+        },
+        priceAfterDiscount: {
             type: Number,
             required: [true, "Please include the product price"],
         },
         size: {
             type: String,
             required: [true, "Please include the product size"],
-        },
-        quantity: {
-            type: Number,
-            required: [true, "Please include the product quantity"],
-            min: [1, 'Quantity can not be less then 1.']
         },
         date_added: {
             type: Date,
@@ -41,7 +45,7 @@ const productSchema = new Schema (
             type: Number,
             required: true,
             default: 0 // the index of the first image is the default main image
-        }
+        },
     }
 );
 const Product = model ('Product', productSchema);

@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import multer from 'multer';
-import controller from '../controllers/productController.js';
+import controller from '../Controllers/productController.js';
 import path from 'path';
 import fs from 'fs';
 
@@ -29,6 +29,7 @@ const storage = multer.diskStorage({
   const upload = multer({ storage: storage });
 
 router.get('/', controller.getAll);
+router.get('/pag', controller.getPagination);
 router.get('/:id', controller.get);
 router.post('/', upload.array('images', 10), controller.post);
 // router.post('/', controller.post);
