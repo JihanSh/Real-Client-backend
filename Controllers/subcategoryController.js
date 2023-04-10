@@ -1,8 +1,9 @@
 import Subcategory from "../Models/subcategoryModel.js";
 
+
 export const getAllsubCategories = async (req, res) => {
     try {
-        const subcategories = await Subcategory.find();
+        const subcategories = await Subcategory.find().populate({path: 'category', select: 'title'});
         res.status(200).json(subcategories);
       } catch (err) {
         res.status(500).json({ error: err });
@@ -13,7 +14,7 @@ export const getSubCategoryById = async (req, res) => {
     try {
         const id = req.params.id;
         console.log(id);
-        const subcategory = await Subcategory.findById(id);
+        const subcategory = await Subcategory.findById(id).populate({path: 'category', select: 'title'});
         res.status(200).json(subcategory);
     } catch (error) {
         console.error(error);
@@ -24,7 +25,8 @@ export const getSubCategoryById = async (req, res) => {
 export const createSubCategory = async (req, res) => {
     try {
         const newSubcategory = new Subcategory ({
-            title: req.body.title
+            title: req.body.title,
+            category: req.body.category
         });
         await newSubcategory.save();
         res.status(201).json(newSubcategory);
@@ -43,6 +45,7 @@ export const editSubCategory = async (req, res) => {
         const updateFields = {};
         
         if (req.body.title) updateFields.title = req.body.title;
+        if (req.body.category) updateFields.category = req.body.category;
 
         const subcategoryDoc = await Subcategory.findByIdAndUpdate(id, {
           $set: updateFields,
