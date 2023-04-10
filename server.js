@@ -4,7 +4,9 @@ import morgan from 'morgan';
 import connectDB from './config/db.js';
 import cors from 'cors';
 import bodyParser from "body-parser";
-import categoriesRoute from './Routes/Categories.js'
+import categoriesRoute from './Routes/Categories.js';
+import cartRoute from './Routes/Cart.js';
+
 
 dotenv.config();
 
@@ -32,6 +34,7 @@ app.get('/', (req, res) => {
 
 // calling routes 
 app.use('/categories', categoriesRoute);
+app.use('/cart', cartRoute);
 
 
 
