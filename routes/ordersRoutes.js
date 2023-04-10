@@ -9,14 +9,18 @@ import {
   } from '../controllers/ordersController.js';
 
 
-  router.get('/', getAllOrders);
-
-
-  router.get('/:id', getOrderById);
   
-  router.post('/', createOrder);
+// create a new order
+router.post('/', createOrder);
+
+// get all orders
+router.get('/', getAllOrders);
+
+// get a single order by ID
+router.get('/:id', getOrderById);
   
-  router.patch('/:id', updateOrderStatus);
+// update the status of an order
+router.patch('/:id', updateOrderStatus);
   
 
   export default router;

@@ -1,32 +1,33 @@
 import Order from "../models/ordersModel.js";
-// import Cart from "../models/cart.js";
+import Cart from "../models/Cart.js";
+import Product from "../models/productModel.js";
+import Auth from "../models/Auth.js";
 
-// create a new order based on the user's cart
 const createOrder = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.body.userId;
 
     // find the user's cart
-    const cart = await Cart.findOne({ user: userId }).populate('products.product');
+    const cart = await Cart.findOne({ userId }).populate('items.productId');
 
     // create a new order based on the cart's products
     const order = new Order({
       user: userId,
-      products: cart.products.map((item) => ({
+      products: cart.items.map((item) => ({
         product: {
-            _id: item.product._id,
-            name: item.product.name
+            _id: item.productId._id,
           },
-      quantity: item.quantity
       })),
-      total_price: cart.total_price
+      total_price: cart.bill
     });
 
     // save the order to the database
     const savedOrder = await order.save();
 
     // clear the user's cart
-    await cart.remove();
+    cart.items = [];
+    cart.bill = 0;
+    await cart.save();
 
     res.status(201).json(savedOrder);
   } catch (error) {
@@ -36,10 +37,13 @@ const createOrder = async (req, res) => {
 };
 
 
+
 // get all orders
 const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate('user', 'name address phone').select('timestamps');
+    const orders = await Order.find().populate('products.product','name size')
+                                     .populate('user', 'username  address phonenumber')
+                                     .select('status createdAt ');
     res.json(orders);
   } catch (error) {
     console.error(error);
@@ -51,7 +55,8 @@ const getAllOrders = async (req, res) => {
 // get a single order by ID
 const getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id).populate('user', 'name email address phone');
+    const order = await Order.findById(req.params.id).populate('user', 'username  address phonenumber')
+                                                     .populate('products.product','name size')
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
     }

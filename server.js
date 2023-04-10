@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 
 
 // calling routes 
-app.use('/api/orders', orderRoutes)
+app.use('/orders', orderRoutes)
 
 
 
