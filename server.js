@@ -27,7 +27,6 @@ app.get('/', (req, res) => {
 });
 
 
-
 // calling routes 
 app.use('/products', productRouter);
 app.use('/subcategories', subcategoriesRoute);
