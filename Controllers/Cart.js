@@ -61,7 +61,6 @@ export const addCartItem = async (req, res) => {
 export const deleteItem = async (req, res) => {
   const userId = req.params.userId;
   const productId = req.params.productId;
-  console.log(productId);
   try {
     let cart = await Cart.findOne({ userId });
     let product = await Product.findOne({ _id: productId });
@@ -70,7 +69,7 @@ export const deleteItem = async (req, res) => {
     );
     if (itemIndex > -1) {
       cart.items.splice(itemIndex, 1);
-      cart.bill -= product.price;
+      cart.bill -= product.getDiscountedPrice() || product.price;
     }
     cart = await cart.save();
     // console.log("hello", cart);
