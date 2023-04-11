@@ -1,6 +1,5 @@
 import { response } from "express";
 import Product from "../Models/productModel.js";
-import Category from "../Models/category.js";
 
 
 
@@ -66,7 +65,7 @@ class Controller {
   // creating new product
   async post(req, res) {
     try {
-      const { name, description, category,subcategory, price, priceAfterDiscount, size, quantity, main_image } = req.body;
+      const { name, description, category,subcategory, price, discountPercentage, size, quantity, main_image } = req.body;
       const images = req.files.map((file) => file.filename);
   
       const product = new Product({
@@ -76,13 +75,15 @@ class Controller {
         category,
         subcategory,
         price,
-        priceAfterDiscount,
+        discountPercentage,
         size,
         quantity,
         main_image
       });
-      await product.save();
-      res.status(201).json(product);
+    
+      const savedProduct = await product.save();
+      const discountedPrice = savedProduct.getDiscountedPrice();
+      res.status(201).json({ product: savedProduct, discountedPrice });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Server error' });
@@ -91,16 +92,24 @@ class Controller {
   
 
   //update a product by _id
-  put(req, res, next) {
+  async put(req, res, next) {
     let { id } = req.params;
-    let body = req.body;
-    Product.updateOne({ _id: id }, { $set: body })
-      .then((response) => {
-        res.status(200).send({ success: true, response });
-      })
-      .catch((err) => {
-        return next(err);
-      });
+    let { name, description, category,subcategory, price, discountPercentage, size, quantity, main_image } = req.body;
+    try {
+      const product = await Product.findOneAndUpdate(
+        { _id: id },
+        { name,description, category,subcategory, price, discountPercentage, size, quantity, main_image  },
+        { new: true, runValidators: true }
+      );
+  
+      // Update discounted price
+      product.discountedPrice = product.getDiscountedPrice();
+      await product.save();
+  
+      res.status(200).json({ product });
+    } catch (error) {
+      next(error);
+    }
   }
 
   //delete a product by id
