@@ -16,4 +16,5 @@ router.put('/:id', editSubCategory);
 router.delete('/:id', deleteSubCategory);
 
 
+
 export default router;

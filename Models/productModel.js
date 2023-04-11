@@ -20,7 +20,7 @@ const productSchema = new Schema (
             ref: 'Category',
             required: [true, "Please include the product category"],
         },
-        subcategory:{
+        subcategory:{ 
             type: Schema.Types.ObjectId,
             ref: 'Subcategory',
             required: [true, "Please include the product subcategory"],
