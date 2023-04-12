@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "server": "nodeemon server.js"
+    "server": "nodeeemon server.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/JihanSh/Real-Client-backend#readme",
   "dependencies": {
+    "body-parser": "^1.20.2",
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "cookie": "^0.5.0",
