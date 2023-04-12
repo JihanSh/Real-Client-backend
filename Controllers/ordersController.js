@@ -1,7 +1,7 @@
-import Order from "../models/ordersModel.js";
-import Cart from "../models/Cart.js";
-import Product from "../models/productModel.js";
-import Auth from "../models/Auth.js";
+import Order from "../Models/ordersModel.js";
+import Cart from "../Models/Cart.js";
+import Product from "../Models/productModel.js";
+import Auth from "../Models/Auth.js";
 
 const createOrder = async (req, res) => {
   try {

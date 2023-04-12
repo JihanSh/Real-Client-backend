@@ -6,7 +6,7 @@ import {
     getAllOrders,
     getOrderById,
     updateOrderStatus
-  } from '../controllers/ordersController.js';
+  } from '../Controllers/ordersController.js';
 
 
   
