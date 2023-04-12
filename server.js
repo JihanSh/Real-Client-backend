@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import connectDB from "./config/db.js";
 import cors from "cors";
-import router from "./routes/Route.js";
+import router from "./Routes/AuthRoute.js";
 import cookieParser from "cookie-parser";
 import { adminAuth, userAuth } from "../middleware/Auth.js";
 
