@@ -43,7 +43,7 @@ const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find().populate('products.product','name size')
                                      .populate('user', 'username  address phonenumber')
-                                     .select('status createdAt ');
+                                     .select('status total_price createdAt ');
     res.json(orders);
   } catch (error) {
     console.error(error);
