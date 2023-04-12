@@ -5,7 +5,7 @@ import connectDB from "./config/db.js";
 import cors from "cors";
 import router from "./Routes/AuthRoute.js";
 import cookieParser from "cookie-parser";
-import { adminAuth, userAuth } from "../middleware/Auth.js";
+import { adminAuth, userAuth } from "./middleware/Auth.js";
 import productRouter from './Routes/productRoute.js';
 import subcategoriesRoute from './Routes/subcategoryRoute.js';
 import bodyParser from "body-parser";

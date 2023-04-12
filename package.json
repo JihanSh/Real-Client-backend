@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "server": "nodeeemon server.js"
+    "server": "nodemon server.js"
   },
   "repository": {
     "type": "git",
