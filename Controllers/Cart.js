@@ -4,7 +4,9 @@ import Product from "../Models/productModel.js";
 export const getCartItems = async (req, res) => {
     const userId = req.params.id;
     try{
-        let cart = await Cart.findOne({userId});
+        let cart = await Cart.findOne({ userId })
+        .populate("items.productId")
+        .exec();
         if(cart && cart.items.length > 0){
             res.send(cart);
         }
