@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import { adminAuth, userAuth } from "./middleware/Auth.js";
 import productRouter from './Routes/productRoute.js';
 import subcategoriesRoute from './Routes/subcategoryRoute.js';
+import orderRoutes from './routes/ordersRoutes.js'
 import bodyParser from "body-parser";
 import categoriesRoute from './Routes/Categories.js';
 import cartRoute from './Routes/Cart.js';
@@ -36,14 +37,12 @@ app.use(cors());
 app.use("/api/", router);
 app.use(cookieParser());
 
-// Website Routes
-app.get("/admin", adminAuth, (req, res) => res.send("Admin Route"));
-app.get("/basic", userAuth, (req, res) => res.send("User Route"));
-app.use('/categories', categoriesRoute);
-app.use('/products', productRouter);
-app.use('/cart', cartRoute);app.use('/products', productRouter);
-app.use('/subcategories', subcategoriesRoute);
-app.listen(
-  PORT,
-  console.log(`Server is running in ${process.env.NODE_ENV} on port ${PORT}!!!`)
-);
+app.get('/', (req, res) => {
+   res.send('API is running...')
+});
+app.use("/orders", orderRoutes);
+
+// calling routes 
+
+
+
