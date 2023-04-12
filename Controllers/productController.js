@@ -1,6 +1,5 @@
 import { response } from "express";
 import Product from "../Models/productModel.js";
-import Category from "../Models/category.js";
 
 
 
