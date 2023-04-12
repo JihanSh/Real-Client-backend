@@ -35,6 +35,7 @@ app.use(express.urlencoded());
 app.use(cors());
 app.use("/api/", router);
 app.use(cookieParser());
+
 app.get("/admin", adminAuth, (req, res) => res.send("Admin Route"));
 app.get("/basic", userAuth, (req, res) => res.send("User Route"));
 app.use("/products", productRouter);
@@ -46,4 +47,4 @@ app.use("/orders", orderRoutes);
 app.listen(
   PORT,
   console.log(`Server is running in ${process.env.NODE_ENV} on port ${PORT}!!!`)
-);
+); 
