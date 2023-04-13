@@ -19,7 +19,7 @@ export const getCartItems = async (req, res) => {
         res.status(500).send("Something went wrong");
     }
 }
- 
+
 export const addCartItem = async (req, res) => {
     const userId = req.params.id;
     const productId = req.body.productId;
