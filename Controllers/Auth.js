@@ -7,37 +7,45 @@ const jwtSecret="123456";
 export const register = async (req, res, next) => {
   
   try {
+    const existingUser = await User.findOne({ username: req.body.username });
+    if (existingUser) {
+      return res.status(400).json({ error: "Username already exists" });
+    }
+
     if (!req.body || !req.body.username || !req.body.password || !req.body.address || !req.body.phonenumber) {
       return res.status(400).json({ error: "Missing required fields" });
     }
+
+    if (req.body.password.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 6 characters long" });
+    }
+
     // hash the password
-    bcrypt.hash(req.body.password, 10).then(async (hash) => {
-      await User.create({
-        username: req.body.username,
-        password: hash,
-        address: req.body.address,
-        phonenumber: req.body.phonenumber,
-      })
-        .then((user) => {
-          const maxAge = 3 * 60 * 60;
-          const token = jwt.sign(
-            { id: user._id, username:req.body.username, role: user.role },
-            jwtSecret,
-            {
-              expiresIn: maxAge, // 3hrs in sec
-            }
-          );
-          res.cookie("jwt", token, {
-            httpOnly: true,
-            maxAge: maxAge * 1000, // 3hrs in ms
-          });
-          res.status(201).json({
-            message: "User successfully created",
-            user: user._id,
-            
-          });
-        })
-        
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const user = await User.create({
+      username: req.body.username,
+      password: hash,
+      address: req.body.address,
+      phonenumber: req.body.phonenumber,
+    });
+
+    const maxAge = 3 * 60 * 60;
+    const token = jwt.sign(
+      { id: user._id, username:req.body.username, role: user.role },
+      jwtSecret,
+      {
+        expiresIn: maxAge, // 3hrs in sec
+      }
+    );
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      maxAge: maxAge * 1000, // 3hrs in ms
+    });
+    res.status(201).json({
+      message: "User successfully created",
+      user: user._id,
     });
   } catch (error) {
     console.log(error);
