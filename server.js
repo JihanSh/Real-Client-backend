@@ -19,7 +19,7 @@ dotenv.config();
 await connectDB();
 
 const PORT = process.env.PORT || 5000;
-
+const PORT2 = process.env.PORT || 3000;
 const app = new express();
 
 
@@ -35,7 +35,7 @@ app.use(express.urlencoded());
 app.use(cors());
 app.use("/api/", router);
 app.use(cookieParser());
-
+app.use("/uploads", express.static('uploads'))
 app.get("/admin", adminAuth, (req, res) => res.send("Admin Route"));
 app.get("/basic", userAuth, (req, res) => res.send("User Route"));
 app.use("/products", productRouter);

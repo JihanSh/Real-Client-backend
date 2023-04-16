@@ -1,5 +1,7 @@
 import { response } from "express";
 import Product from "../Models/productModel.js";
+import path from "path";
+
 
 class Controller {
   //get all the products
@@ -80,11 +82,18 @@ class Controller {
         quantity,
         main_image,
       } = req.body;
-      const images = req.files.map((file) => file.filename);
+      
+      let images = [];
+      if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+          const filePath = path.join("uploads", file.filename);
+          images.push(filePath);
+        }
+      }
 
       const product = new Product({
         name,
-        images,
+        images: images.length > 0 ? images : undefined,
         description,
         category,
         subcategory,
