@@ -39,17 +39,24 @@ class Controller {
 
   async getPagination(req, res) {
     const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 6;
+    const limit = req.query.limit * 1 || 8;
+  
+    // Count the total number of products
+    const count = await Product.countDocuments();
+  
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(count / limit);
+  
     const skip = (page - 1) * limit;
     const products = await Product.find({}).skip(skip).limit(limit);
-
+  
     res.status(200).json({
       results: products.length,
       page,
+      totalPages, // Add totalPages to the response object
       data: products,
     });
   }
-
   //get a product by id
   async get(req, res) {
     const { id } = req.params;

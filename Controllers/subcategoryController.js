@@ -69,3 +69,16 @@ export const deleteSubCategory = async (req, res) => {
       res.status(500).json({ error });
     }
   };
+
+export const getSubCategoryByCategory = async (req, res) => {
+  const categoryId = req.params.id;
+  try {
+    const subcategories = await Subcategory.find({
+      category: categoryId,
+    });
+    res.status(200).json({ subcategories, message: "subcategorise listed successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error });
+  }
+};
