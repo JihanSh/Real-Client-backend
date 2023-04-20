@@ -83,6 +83,7 @@ bcrypt.compare(req.body.password, user.password).then(function (result) {
           res.status(201).json({
             message: "User successfully Logged in",
             user: user._id,
+            token: token,
             
           });
         } else {
@@ -97,6 +98,12 @@ bcrypt.compare(req.body.password, user.password).then(function (result) {
     });
   }
 }
+
+// // update the user
+
+// export const updateUser = (req, res) => {
+//   const 
+// }
 
 // update role to admin
 export const update = async (req, res, next) => {
