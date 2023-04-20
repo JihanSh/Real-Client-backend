@@ -4,6 +4,7 @@ const router = express.Router();
 import {
     getAllsubCategories,
     getSubCategoryById,
+    getSubCategoryByCategory,
     createSubCategory,
     editSubCategory,
     deleteSubCategory
@@ -11,6 +12,7 @@ import {
 
 router.get('/', getAllsubCategories);
 router.get('/:id', getSubCategoryById);
+router.get('/list/:id', getSubCategoryByCategory);
 router.post('/', createSubCategory);
 router.put('/:id', editSubCategory);
 router.delete('/:id', deleteSubCategory);

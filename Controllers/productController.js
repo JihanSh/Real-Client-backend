@@ -1,5 +1,7 @@
 import { response } from "express";
 import Product from "../Models/productModel.js";
+import path from "path";
+
 
 class Controller {
   //get all the products
@@ -37,17 +39,24 @@ class Controller {
 
   async getPagination(req, res) {
     const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 6;
+    const limit = req.query.limit * 1 || 8;
+  
+    // Count the total number of products
+    const count = await Product.countDocuments();
+  
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(count / limit);
+  
     const skip = (page - 1) * limit;
     const products = await Product.find({}).skip(skip).limit(limit);
-
+  
     res.status(200).json({
       results: products.length,
       page,
+      totalPages, // Add totalPages to the response object
       data: products,
     });
   }
-
   //get a product by id
   async get(req, res) {
     const { id } = req.params;
@@ -80,11 +89,18 @@ class Controller {
         quantity,
         main_image,
       } = req.body;
-      const images = req.files.map((file) => file.filename);
+      
+      let images = [];
+      if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+          const filePath = path.join("uploads", file.filename);
+          images.push(filePath);
+        }
+      }
 
       const product = new Product({
         name,
-        images,
+        images: images.length > 0 ? images : undefined,
         description,
         category,
         subcategory,
