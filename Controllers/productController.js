@@ -183,15 +183,29 @@ class Controller {
 
   async getProductsBySubcategory(req, res) {
     console.log("hello");
-
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 8;
+  
     const subcategoryId = req.params.id;
+    // Count the total number of products
+    const count = await Product.countDocuments({ subcategory: subcategoryId });
+  
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(count / limit);
+  
+    const skip = (page - 1) * limit;
     console.log("subcategoryId: ", subcategoryId);
     try {
       const products = await Product.find({
         subcategory: subcategoryId,
-      });
+      }).skip(skip).limit(limit);
       console.log("kkkk", products);
-      res.status(200).json(products);
+      res.status(200).json({
+        results: products.length,
+        page,
+        totalPages, // Add totalPages to the response object
+        data: products,
+      });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
@@ -201,15 +215,29 @@ class Controller {
 
   async getProductsByCategory(req, res) {
     console.log("hello");
-
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 8;
+  
     const categoryId = req.params.id;
+    // Count the total number of products
+    const count = await Product.countDocuments({ category: categoryId });
+  
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(count / limit);
+  
+    const skip = (page - 1) * limit;
     console.log("categoryId: ", categoryId);
     try {
       const products = await Product.find({
         category: categoryId,
-      });
+      }).skip(skip).limit(limit);
       console.log("kkkk", products);
-      res.status(200).json(products);
+      res.status(200).json({
+        results: products.length,
+        page,
+        totalPages, // Add totalPages to the response object
+        data: products,
+      });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
