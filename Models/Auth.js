@@ -1,5 +1,5 @@
 // authentication method
-import Mongoose from 'mongoose';
+import Mongoose from "mongoose";
 const UserSchema = new Mongoose.Schema({
   username: {
     type: String,
@@ -11,15 +11,14 @@ const UserSchema = new Mongoose.Schema({
     minlength: 6,
     required: true,
   },
-  address:{
-type: String,
+  address: {
+    type: String,
   },
   phonenumber: {
-    type:String,
+    type: String,
     required: true,
-  }
-
-  ,
+  },
+  
   role: {
     type: String,
     default: "User",
