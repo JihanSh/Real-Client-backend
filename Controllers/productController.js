@@ -48,7 +48,10 @@ class Controller {
     const totalPages = Math.ceil(count / limit);
   
     const skip = (page - 1) * limit;
-    const products = await Product.find({}).skip(skip).limit(limit);
+    const products = await Product.find({})
+    .sort({ date_added: -1 }) // Sort products by the createdAt field in descending order
+    .skip(skip)
+    .limit(limit);
   
     res.status(200).json({
       results: products.length,
@@ -198,7 +201,7 @@ class Controller {
     try {
       const products = await Product.find({
         subcategory: subcategoryId,
-      }).skip(skip).limit(limit);
+      }).sort({ date_added: -1 }).skip(skip).limit(limit);
       console.log("kkkk", products);
       res.status(200).json({
         results: products.length,
@@ -230,7 +233,7 @@ class Controller {
     try {
       const products = await Product.find({
         category: categoryId,
-      }).skip(skip).limit(limit);
+      }).sort({ date_added: -1 }).skip(skip).limit(limit);
       console.log("kkkk", products);
       res.status(200).json({
         results: products.length,
