@@ -46,6 +46,8 @@ export const register = async (req, res, next) => {
     res.status(201).json({
       message: "User successfully created",
       user: user._id,
+      token: token,
+      role: "User",
     });
   } catch (error) {
     console.log(error);
@@ -84,6 +86,7 @@ bcrypt.compare(req.body.password, user.password).then(function (result) {
             message: "User successfully Logged in",
             user: user._id,
             token: token,
+            role: "User"
             
           });
         } else {
@@ -99,14 +102,39 @@ bcrypt.compare(req.body.password, user.password).then(function (result) {
   }
 }
 
-// // update the user
+// update the user
+export const updateUser = async (req, res,next) => {
+  const userId=req.body;
+  const updateData = req.body;
+  try {
+    // Find the user by their ID and update their information
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+    });
+    // If the user is not found, return a 404 error
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    // Return the updated user object and a success message
+    res.status(200).json({
+      message: "User updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    // If an error occurs, return a 500 error with the error message
+    res.status(500).json({
+      message: "An error occurred",
+      error: error.message,
+    });
+  }
 
-// export const updateUser = (req, res) => {
-//   const 
-// }
+
+  }
 
 // update role to admin
-export const update = async (req, res, next) => {
+export const updateRole = async (req, res, next) => {
   const { role, id } = req.body;
   // Verifying if role and id is presnt
   if (role && id) {
