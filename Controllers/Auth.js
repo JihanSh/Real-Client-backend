@@ -102,13 +102,32 @@ bcrypt.compare(req.body.password, user.password).then(function (result) {
   }
 }
 
+// get the user by id
+export const getUserById = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id).select(
+      "username address phonenumber"
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({
+      message: "An error occurred",
+      error: error.message,
+    });
+  }
+};
+
 // update the user
 export const updateUser = async (req, res,next) => {
   const userId=req.body;
-  const updateData = req.body;
+  const address = req.body.address;
+  const phonenumber = req.body.phonenumber;
   try {
     // Find the user by their ID and update their information
-    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+    const updatedUser = await User.findByIdAndUpdate(userId, username,password, address,phonenumber, {
       new: true,
     });
     // If the user is not found, return a 404 error
