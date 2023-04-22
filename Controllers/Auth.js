@@ -46,7 +46,7 @@ export const register = async (req, res, next) => {
     res.status(201).json({
       message: "User successfully created",
       user: user._id,
-      token: token,
+      token:token,
       role: "User",
     });
   } catch (error) {
@@ -85,7 +85,7 @@ bcrypt.compare(req.body.password, user.password).then(function (result) {
           res.status(201).json({
             message: "User successfully Logged in",
             user: user._id,
-            token: token,
+            token:token,
             role: "User"
             
           });
