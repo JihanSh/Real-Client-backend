@@ -119,15 +119,16 @@ export const getUserById = async (req, res, next) => {
     });
   }
 };
-
 // update the user
 export const updateUser = async (req, res,next) => {
-  const userId=req.body;
-  const address = req.body.address;
-  const phonenumber = req.body.phonenumber;
+  const userId=req.body.id;
+  const updateData = {
+    address: req.body.address,
+    phoneNumber: req.body.phoneNumber,
+  };
   try {
     // Find the user by their ID and update their information
-    const updatedUser = await User.findByIdAndUpdate(userId, username,password, address,phonenumber, {
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true,
     });
     // If the user is not found, return a 404 error
@@ -148,9 +149,8 @@ export const updateUser = async (req, res,next) => {
       error: error.message,
     });
   }
-
-
   }
+  
 
 // update role to admin
 export const updateRole = async (req, res, next) => {
