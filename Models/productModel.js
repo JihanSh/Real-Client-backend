@@ -54,11 +54,7 @@ const productSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  main_image: {
-    type: Number,
-    required: true,
-    default: 0, // the index of the first image is the default main image
-  },
+ 
 });
 
 productSchema.methods.getDiscountedPrice = function () {

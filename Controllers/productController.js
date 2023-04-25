@@ -8,7 +8,6 @@ import fs from "fs";
 
 class Controller {
   //get all the products
-  //.populate({path: 'category', select: 'title'})
   async getAll(req, res) {
     try {
       const products = await Product.find()
@@ -19,26 +18,6 @@ class Controller {
       res.status(500).json({ message: error.message });
     }
   }
-  //get all product by pagination
-
-  // async getPagination(req, res) {
-  //   try {
-  //     const page = req.query.page ? parseInt(req.query.page) : 1; // current page, default to 1 if not provided
-  //     const perPage = 6; // number of products to show per page
-
-  //     const productsCount = await Product.countDocuments();
-  //     const products = await Product.find().skip((page - 1) * perPage).limit(perPage);
-  //     console.log("jjjjj",skip);
-  //     console.log("ssss",perPage);
-  //     res.status(200).json({
-  //       currentPage: page,
-  //       totalPages: Math.ceil(productsCount / perPage),
-  //       products,
-  //     });
-  //   } catch (error) {
-  //     res.status(500).json({ message: error.message });
-  //   }
-  // }
 
   async getPagination(req, res) {
     const page = req.query.page * 1 || 1;
@@ -94,7 +73,7 @@ class Controller {
         price,
         discountPercentage,
         size,
-        main_image,
+       
       } = req.body;
       
       let images = [];
@@ -125,7 +104,7 @@ class Controller {
         price,
         discountPercentage,
         size,
-        main_image,
+        
       });
 
       const savedProduct = await product.save();
@@ -138,103 +117,7 @@ class Controller {
   }
 
 
-  // async post(req, res) {
-  //   try {
-  //     const {
-  //       name,
-  //       description,
-  //       category,
-  //       subcategory,
-  //       price,
-  //       discountPercentage,
-  //       size,
-  //       main_image,
-  //     } = req.body;
-      
-  //     let images = [];
-  //     if (req.files && req.files.length > 0) {
-  //       for (const file of req.files) {
-  //         const filePath = path.join("uploads", file.filename);
-  //         images.push(filePath);
-  //       }
-  //     }
-
-  //     const product = new Product({
-  //       name,
-  //       images: images.length > 0 ? images : undefined,
-  //       description,
-  //       category,
-  //       subcategory,
-  //       price,
-  //       discountPercentage,
-  //       size,
-      
-  //       main_image,
-  //     });
-
-  //     const savedProduct = await product.save();
-  //     const discountedPrice = savedProduct.getDiscountedPrice();
-  //     res.status(201).json({ product: savedProduct, discountedPrice });
-  //   } catch (error) {
-  //     console.error(error);
-  //     res.status(500).json({ message: "Server error" });
-  //   }
-  // }
-
-  //update a product by _id
-
-
-  // async put(req, res) {
-  //   try {
-  //     const { id } = req.params;
-  //     const { name, description, price, discountPercentage, size, category, subcategory } =
-  //       req.body;
-  //     const images = req.files;
-  
-  //     // Find the product by ID
-  //     const product = await Product.findById(id);
-  
-  //     if (!product) {
-  //       return res.status(404).json({ message: "Product not found" });
-  //     }
-  //     console.log("jjjj", product)
-  //     // Delete old images if there are new images
-  //     if (images && images.length > 0) {
-  //       product.images.forEach((imagePath) => {
-  //         fs.unlinkSync(`${imagePath}`);
-  //       });
-  //     }
-     
-  //     // Update fields with new values
-  //     product.name = name;
-  //     console.log("gggg",name)
-  //     product.description = description;
-  //     product.price = price;
-  //     console.log("ggggsasdad",price)
-  //     product.discountPercentage = discountPercentage;
-  //     product.size = size;
-  //     product.category = category;
-  //     product.subcategory = subcategory;
-  
-  //     // Update images if there are new images, otherwise keep existing images
-  //     if (!images || images.length === 0) {
-  //       product.images = [];
-  //     } else {
-  //       product.images = images.map((image) => image.filename);
-  //     }
-  
-  //     // Update discounted price
-  //     product.discountedPrice = product.getDiscountedPrice();
-  
-  //     // Save the updated product to the database
-  //     await product.save();
-  
-  //     res.status(200).json(product);
-  //   } catch (error) {
-  //     console.log(error);
-  //     res.status(500).json({ message: "Server Error" });
-  //   }
-  // };
+ // update a product
 
   async put(req, res) {
     try {
@@ -246,7 +129,7 @@ class Controller {
     price,
     discountPercentage,
     size,
-    main_image,
+   
     } = req.body;
     
     let images = [];
@@ -258,10 +141,10 @@ class Controller {
     }
     
      // Find the category by its title
-     const category = await Category.findOne({ title: categoryTitle });
+     const category = await Category.findOne({ title: categoryTitle});
 
      // Find the subcategories that belong to the selected category
-     const subcategories = await Subcategory.find({ category: category._id });
+     const subcategories = await Subcategory.find({ category: category._id});
 
      // Find the specific subcategory by its title within the subcategories array
      const subcategory = subcategories.find(sub => sub.title === subcategoryTitle);
@@ -285,7 +168,6 @@ class Controller {
     product.discountPercentage = discountPercentage || product.discountPercentage;
     product.size = size || product.size;
     
-    product.main_image = main_image || product.main_image;
     
     const savedProduct = await product.save();
     const discountedPrice = savedProduct.getDiscountedPrice();

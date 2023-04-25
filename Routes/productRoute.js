@@ -9,8 +9,9 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/');
     },
     filename: function (req, file, cb) {
-        let ext = path.extname(file.originalname)
-      cb(null, Date.now() + ext);
+        const timestamp = Date.now();
+        const fileName = `${timestamp}-${file.originalname}`;
+        cb(null, fileName);
     },
   });
 
@@ -64,3 +65,7 @@ export default router;
 // });
 
 // const upload = multer({ storage: storage });
+
+
+// let ext = path.extname(file.originalname)
+// cb(null, Date.now() + ext);
