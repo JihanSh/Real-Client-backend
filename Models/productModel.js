@@ -26,6 +26,14 @@ const productSchema = new Schema({
     ref: "Subcategory",
     required: [true, "Please include the product subcategory"],
   },
+  categoryTitle: {
+    type: String,
+    required: true
+  },
+  subcategoryTitle: {
+    type: String,
+    required: true
+  },
   price: {
     type: Number,
     required: [true, "Please include the product price"],

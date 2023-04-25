@@ -42,7 +42,7 @@ router.get("/list2/:id", controller.getProductsByCategory);
 router.get("/:id", controller.get);
 router.post("/", upload.array("images"), controller.post);
 // router.post('/', controller.post);
-router.put("/:id", controller.put);
+router.put("/:id", upload.array("images"), controller.put);
 router.delete("/:id", controller.delete);
 
 export default router;
