@@ -116,6 +116,7 @@ export const getUserById = async (req, res, next) => {
     const user = await User.findById(req.params.id).select(
       "username address phonenumber"
     );
+    console.log(user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -132,7 +133,7 @@ export const updateUser = async (req, res, next) => {
   const userId = req.body.id;
   const updateData = {
     address: req.body.address,
-    phoneNumber: req.body.phoneNumber,
+    phonenumber: req.body.phonenumber,
   };
   try {
     // Find the user by their ID and update their information
