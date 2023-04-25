@@ -85,13 +85,13 @@ class Controller {
       }
 
       // Find the category by its title
-      const category = await Category.findOne({ title: categoryTitle.toLowerCase() });
+      const category = await Category.findOne({ title: categoryTitle });
 
       // Find the subcategories that belong to the selected category
       const subcategories = await Subcategory.find({ category: category.id });
 
       // Find the specific subcategory by its title within the subcategories array
-      const subcategory = subcategories.find(sub => sub.title === subcategoryTitle.toLowerCase() );
+      const subcategory = subcategories.find(sub => sub.title === subcategoryTitle);
 
       const product = new Product({
         name,
@@ -141,10 +141,10 @@ class Controller {
     }
     
      // Find the category by its title
-     const category = await Category.findOne({ title: categoryTitle.toLowerCase()});
+     const category = await Category.findOne({ title: categoryTitle});
 
      // Find the subcategories that belong to the selected category
-     const subcategories = await Subcategory.find({ category: category._id.toLowerCase()});
+     const subcategories = await Subcategory.find({ category: category._id});
 
      // Find the specific subcategory by its title within the subcategories array
      const subcategory = subcategories.find(sub => sub.title === subcategoryTitle);
