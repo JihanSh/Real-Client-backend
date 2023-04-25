@@ -1,18 +1,23 @@
 import User from "../Models/Auth.js";
-import bcrypt from "bcryptjs"; 
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const jwtSecret="123456";
+const jwtSecret = "123456";
 // register
 export const register = async (req, res, next) => {
-  
   try {
     const existingUser = await User.findOne({ username: req.body.username });
     if (existingUser) {
       return res.status(400).json({ error: "Username already exists" });
     }
 
-    if (!req.body || !req.body.username || !req.body.password || !req.body.address || !req.body.phonenumber) {
+    if (
+      !req.body ||
+      !req.body.username ||
+      !req.body.password ||
+      !req.body.address ||
+      !req.body.phonenumber
+    ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -33,7 +38,7 @@ export const register = async (req, res, next) => {
 
     const maxAge = 3 * 60 * 60;
     const token = jwt.sign(
-      { id: user._id, username:req.body.username, role: user.role },
+      { id: user._id, username: req.body.username, role: user.role },
       jwtSecret,
       {
         expiresIn: maxAge, // 3hrs in sec
@@ -46,7 +51,7 @@ export const register = async (req, res, next) => {
     res.status(201).json({
       message: "User successfully created",
       user: user._id,
-      token:token,
+      token: token,
       role: "User",
     });
   } catch (error) {
@@ -64,15 +69,15 @@ export const login = async (req, res, next) => {
     return res.status(400).json({
       message: "Username or Password not present",
     });
-  }else
-  try {
-    const user = await User.findOne({ username:req.body.username});
+  } else
+    try {
+      const user = await User.findOne({ username: req.body.username });
       // comparing given password with hashed password
-bcrypt.compare(req.body.password, user.password).then(function (result) {
+      bcrypt.compare(req.body.password, user.password).then(function (result) {
         if (result) {
           const maxAge = 3 * 60 * 60;
           const token = jwt.sign(
-            { id: user._id,username:req.body.username, role: user.role },
+            { id: user._id, username: req.body.username, role: user.role },
             jwtSecret,
             {
               expiresIn: maxAge, // 3hrs in sec
@@ -85,27 +90,50 @@ bcrypt.compare(req.body.password, user.password).then(function (result) {
           res.status(201).json({
             message: "User successfully Logged in",
             user: user._id,
-            token:token,
-            role: "User"
-            
+            token: token,
+            role: "User",
           });
         } else {
           res.status(400).json({ message: "Login not succesful" });
         }
       });
-    
+    } catch (error) {
+      res.status(400).json({
+        message: "An error occurred",
+        error: error.message,
+      });
+    }
+};
+// logout
+export const logout = async (req, res, next) => {
+  res.clearCookie("jwt");
+  res.status(200).json({ message: "User successfully logged out" });
+};
+
+// get the user by id
+export const getUserById = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id).select(
+      "username address phonenumber"
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
   } catch (error) {
     res.status(400).json({
       message: "An error occurred",
       error: error.message,
     });
   }
-}
-
+};
 // update the user
-export const updateUser = async (req, res,next) => {
-  const userId=req.body;
-  const updateData = req.body;
+export const updateUser = async (req, res, next) => {
+  const userId = req.body.id;
+  const updateData = {
+    address: req.body.address,
+    phoneNumber: req.body.phoneNumber,
+  };
   try {
     // Find the user by their ID and update their information
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
@@ -129,9 +157,7 @@ export const updateUser = async (req, res,next) => {
       error: error.message,
     });
   }
-
-
-  }
+};
 
 // update role to admin
 export const updateRole = async (req, res, next) => {
@@ -169,7 +195,6 @@ export const updateRole = async (req, res, next) => {
     });
 };
 
-
 // delete a user
 export const deleteUser = async (req, res, next) => {
   const { id } = req.body;
@@ -184,6 +209,5 @@ export const deleteUser = async (req, res, next) => {
         .json({ message: "An error occurred", error: error.message })
     );
 };
-
 
 // hash the password
