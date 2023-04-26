@@ -60,6 +60,40 @@ class Controller {
     }
   }
 
+
+  //get discounted products
+
+async getAllDiscountedProducts (req, res) {
+  const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 12;
+  
+    // Count the total number of products
+    const count = await Product.countDocuments();
+  
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(count / limit);
+  
+    const skip = (page - 1) * limit;
+  try {
+    const products = await Product.find({ discountPercentage: { $gt: 0 } })
+    .sort({ date_added: -1 }) // Sort products by the createdAt field in descending order
+    .skip(skip)
+    .limit(limit);
+    if (!products || products.length === 0) {
+      return res.status(404).json({ message: "No discounted products found" });
+    }
+    res.status(200).json({
+      results: products.length,
+      page,
+      totalPages, // Add totalPages to the response object
+      data: products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server error occurred while fetching discounted products" });
+  }
+};
+
   // creating new product
 
 
@@ -203,7 +237,7 @@ class Controller {
     }
   }
 
-  // grt products by subcategory name
+  // get products by subcategory name
 
   async getProductsBySubcategory(req, res) {
     console.log("hello");
@@ -235,7 +269,7 @@ class Controller {
     }
   }
 
-  // grt products by category name
+  // get products by category name
 
   async getProductsByCategory(req, res) {
     console.log("hello");
@@ -294,6 +328,11 @@ class Controller {
     }
   }
 }
+
+
+
+
+
 
 const controller = new Controller();
 
