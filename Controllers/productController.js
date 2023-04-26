@@ -84,14 +84,18 @@ class Controller {
         }
       }
 
-      // Find the category by its title
-      const category = await Category.findOne({ title: categoryTitle });
+     
+     // Find the category by its title
+     const categoryRegex = new RegExp(categoryTitle, "i");
+     const category = await Category.findOne({ title: { $regex: categoryRegex } });
 
-      // Find the subcategories that belong to the selected category
-      const subcategories = await Subcategory.find({ category: category.id });
 
-      // Find the specific subcategory by its title within the subcategories array
-      const subcategory = subcategories.find(sub => sub.title === subcategoryTitle);
+     // Find the subcategories that belong to the selected category
+     const subcategories = await Subcategory.find({ category: category._id});
+
+     // Find the specific subcategory by its title within the subcategories array
+     const subcategoryRegex = new RegExp(subcategoryTitle, "i");
+     const subcategory = subcategories.find(sub => sub.title.match(subcategoryRegex));
 
       const product = new Product({
         name,
@@ -141,13 +145,17 @@ class Controller {
     }
     
      // Find the category by its title
-     const category = await Category.findOne({ title: categoryTitle});
+     const categoryRegex = new RegExp(categoryTitle, "i");
+     const category = await Category.findOne({ title: { $regex: categoryRegex } });
+
 
      // Find the subcategories that belong to the selected category
      const subcategories = await Subcategory.find({ category: category._id});
 
      // Find the specific subcategory by its title within the subcategories array
-     const subcategory = subcategories.find(sub => sub.title === subcategoryTitle);
+     const subcategoryRegex = new RegExp(subcategoryTitle, "i");
+     const subcategory = subcategories.find(sub => sub.title.match(subcategoryRegex));
+
 
     const productId = req.params.id;
     
