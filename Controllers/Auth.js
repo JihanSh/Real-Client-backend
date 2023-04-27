@@ -183,7 +183,7 @@ export const updateRole = async (req, res, next) => {
       if (user.role !== "admin") {
         user.role = role;
         user.save().then(() => {
-          res.status("201").json({ message: "Update successful", user });
+          res.status("201").json({ message: "Update", user });
         });
       } else {
         res.status(400).json({ message: "User is already an Admin" });
