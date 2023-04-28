@@ -9,12 +9,6 @@ const orderSchema = new Schema(
       ref: "User",
       required: true,
     },
-    phonenumber: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-
     products: [
       {
         product: {

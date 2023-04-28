@@ -12,6 +12,7 @@ const createOrder = async (req, res) => {
 
     // create a new order based on the cart's products
     const order = new Order({
+
       user: userId,
       products: cart.items.map((item) => ({
         product: {
