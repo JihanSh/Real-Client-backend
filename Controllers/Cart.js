@@ -6,6 +6,8 @@ export const getCartItems = async (req, res) => {
 
   try {
     let cart = await Cart.findOne({ userId })
+    .populate("userId", "username  address phonenumber")
+
       .populate("items.productId")
       .exec();
     if (cart && cart.items.length > 0) {
