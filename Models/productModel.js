@@ -54,6 +54,10 @@ const productSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  soldOut: {
+    type: Boolean,
+    default: false,
+  },
  
 });
 
