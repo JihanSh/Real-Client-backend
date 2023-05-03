@@ -14,6 +14,7 @@ import bodyParser from "body-parser";
 import categoriesRoute from './Routes/Categories.js';
 import cartRoute from './Routes/Cart.js';
 
+
 dotenv.config();
 
 await connectDB();
