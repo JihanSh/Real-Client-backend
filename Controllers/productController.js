@@ -10,7 +10,7 @@ class Controller {
   //get all the products
   async getAll(req, res) {
     try {
-      const products = await Product.find()
+      const products = await Product.find({ soldOut: false })
         .populate({ path: "subcategory", select: "title" })
         .populate({ path: "category", select: "title" });
       res.status(200).json(products);
@@ -30,7 +30,7 @@ class Controller {
     const totalPages = Math.ceil(count / limit);
   
     const skip = (page - 1) * limit;
-    const products = await Product.find({})
+    const products = await Product.find({soldOut: false })
     .sort({ date_added: -1 }) // Sort products by the createdAt field in descending order
     .skip(skip)
     .limit(limit);
@@ -75,7 +75,7 @@ async getAllDiscountedProducts (req, res) {
   
     const skip = (page - 1) * limit;
   try {
-    const products = await Product.find({ discountPercentage: { $gt: 0 } })
+    const products = await Product.find({ discountPercentage: { $gt: 0 } , soldOut: false })
     .sort({ date_added: -1 }) // Sort products by the createdAt field in descending order
     .skip(skip)
     .limit(limit);
@@ -256,6 +256,7 @@ async getAllDiscountedProducts (req, res) {
     try {
       const products = await Product.find({
         subcategory: subcategoryId,
+        soldOut: false
       }).sort({ date_added: -1 }).skip(skip).limit(limit);
       console.log("kkkk", products);
       res.status(200).json({
@@ -288,6 +289,7 @@ async getAllDiscountedProducts (req, res) {
     try {
       const products = await Product.find({
         category: categoryId,
+        soldOut: false
       }).sort({ date_added: -1 }).skip(skip).limit(limit);
       console.log("kkkk", products);
       res.status(200).json({

@@ -136,6 +136,9 @@ export const deleteItem = async (req, res) => {
       cart.bill -= product.getDiscountedPrice() || product.price;
     }
     cart = await cart.save();
+
+     // Mark the product as sold in since it's been deleted from the cart
+     await Product.updateOne({ _id: productId }, { soldOut: false });
     // console.log("hello", cart);
     return res.status(200).send(cart);
   } catch (err) {
