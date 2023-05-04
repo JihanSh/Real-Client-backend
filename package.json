@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "type": "module",
-
   "scripts": {
     "start": "node server server",
     "dev": "nodemon server server"
@@ -39,6 +38,4 @@
   "devDependencies": {
     "nodemon": "^2.0.22"
   }
-  
-
 }
