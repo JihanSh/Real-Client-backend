@@ -42,7 +42,7 @@ const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
       .populate("user", "username  address phonenumber")
-      .populate("products.product", "name images size status price createdAt");
+      .populate("products.product", "name images image size status price createdAt");
     res.json(orders);
   } catch (error) {
     console.error(error);
