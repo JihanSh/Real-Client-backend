@@ -107,18 +107,16 @@ async getAllDiscountedProducts (req, res) {
         price,
         discountPercentage,
         size,
-       
       } = req.body;
       
-      let images = [];
-      if (req.files && req.files.length > 0) {
-        for (const file of req.files) {
-          const filePath = path.join("uploads", file.filename);
-          images.push(filePath);
-        }
-      }
-
-     
+    
+      const image = req.files.images[0];
+    const fileName = image.filename;
+    const basePath = `${req.protocol}://${req.get("host")}/uploads`;
+    const Images = req.files.images.map(
+      (file) => `${basePath}/${file.filename}`
+    );
+    
      // Find the category by its title
      const categoryRegex = new RegExp(categoryTitle, "i");
      const category = await Category.findOne({ title: { $regex: categoryRegex } });
@@ -133,7 +131,8 @@ async getAllDiscountedProducts (req, res) {
 
       const product = new Product({
         name,
-        images: images.length > 0 ? images : undefined,
+        image: `${basePath}/${fileName}`,
+        images: Images,
         description,
         category: category.id,
         subcategory: subcategory._id,
@@ -142,6 +141,7 @@ async getAllDiscountedProducts (req, res) {
         price,
         discountPercentage,
         size,
+        
         
       });
 
@@ -154,71 +154,90 @@ async getAllDiscountedProducts (req, res) {
     }
   }
 
+    // let images = [];
+      // if (req.files && req.files.length > 0) {
+      //   for (const file of req.files) {
+      //     const filePath = path.join("uploads", file.filename);
+      //     images.push(filePath);
+      //   }
+      // }
 
  // update a product
-
-  async put(req, res) {
-    try {
+ async put(req, res) {
+  try {
     const {
-    name,
-    description,
-    categoryTitle,
-    subcategoryTitle,
-    price,
-    discountPercentage,
-    size,
-   
+      name,
+      description,
+      categoryTitle,
+      subcategoryTitle,
+      price,
+      discountPercentage,
+      size
     } = req.body;
-    
-    let images = [];
-    if (req.files && req.files.length > 0) {
-      for (const file of req.files) {
-        const filePath = path.join("uploads", file.filename);
-        images.push(filePath);
-      }
-    }
-    
-     // Find the category by its title
-     const categoryRegex = new RegExp(categoryTitle, "i");
-     const category = await Category.findOne({ title: { $regex: categoryRegex } });
 
+    const image = req.files.images[0];
+    const fileName = image.filename;
+    const basePath = `${req.protocol}://${req.get("host")}/uploads`;
+    const images = req.files.images.map(file => `${basePath}/${file.filename}`);
 
-     // Find the subcategories that belong to the selected category
-     const subcategories = await Subcategory.find({ category: category._id});
+    // Find the category by its title
+    const categoryRegex = new RegExp(categoryTitle, "i");
+    const category = await Category.findOne({ title: { $regex: categoryRegex } });
 
-     // Find the specific subcategory by its title within the subcategories array
-     const subcategoryRegex = new RegExp(subcategoryTitle, "i");
-     const subcategory = subcategories.find(sub => sub.title.match(subcategoryRegex));
+    // Find the subcategories that belong to the selected category
+    const subcategories = await Subcategory.find({ category: category._id });
 
+    // Find the specific subcategory by its title within the subcategories array
+    const subcategoryRegex = new RegExp(subcategoryTitle, "i");
+    const subcategory = subcategories.find(sub => sub.title.match(subcategoryRegex));
 
     const productId = req.params.id;
-    
-    const product = await Product.findById(productId);
-    
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+
+    let product = null;
+    if (!productId) {
+      // Create new product if ID is not provided
+      product = new Product({
+        name,
+        image: `${basePath}/${fileName}`,
+        images,
+        description,
+        category: category.id,
+        subcategory: subcategory._id,
+        categoryTitle: category.title,
+        subcategoryTitle: subcategory.title,
+        price,
+        discountPercentage,
+        size
+      });
+    } else {
+      // Update existing product if ID is provided
+      product = await Product.findById(productId);
+
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      product.name = name || product.name;
+      product.image = `${basePath}/${fileName}` || product.image;
+      product.images = images.length > 0 ? images : product.images;
+      product.description = description || product.description;
+      product.category = category._id || product.category._id;
+      product.subcategory = subcategory._id || product.subcategory._id;
+      product.categoryTitle = category.title || product.category.title;
+      product.subcategoryTitle = subcategory.title || product.subcategory.title;
+      product.price = price || product.price;
+      product.discountPercentage = discountPercentage || product.discountPercentage;
+      product.size = size || product.size;
     }
-    
-    product.name = name || product.name;
-    product.images = images.length > 0 ? images : product.images;
-    product.description = description || product.description;
-    product.category = category._id || product.category._id;
-    product.subcategory = subcategory._id || product.subcategory._id;
-    product.categoryTitle = category.title || product.category.title;
-    product.subcategoryTitle = subcategory.title || product.subcategory.title;
-    product.price = price || product.price;
-    product.discountPercentage = discountPercentage || product.discountPercentage;
-    product.size = size || product.size;
-    
-    
+
     const savedProduct = await product.save();
     const discountedPrice = savedProduct.getDiscountedPrice();
     res.json({ product: savedProduct, discountedPrice });
-    } catch (error) {
+  } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
-    }
-    }
+  }
+}
   //delete a product by id
   async delete(req, res) {
     const { id } = req.params;
