@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build":"webpack--config webpack.config.js"
+    "build":"server.js build"
   },
   "repository": {
     "type": "git",
