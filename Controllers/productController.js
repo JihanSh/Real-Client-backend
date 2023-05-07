@@ -2,8 +2,15 @@ import { response } from "express";
 import Product from "../Models/productModel.js";
 import Category from "../Models/Categories.js";
 import Subcategory from "../Models/subcategoryModel.js";
-import path from "path";
-import fs from "fs";
+import { v2 as cloudinary } from 'cloudinary';
+
+
+cloudinary.config({
+  cloud_name: "dnp8jeluj",
+  api_key: "115474453593681",
+  api_secret: "pXOI1pAlMLkB6aTFeV4PaIOcwC4"
+});
+
 
 
 class Controller {
@@ -95,8 +102,7 @@ async getAllDiscountedProducts (req, res) {
 };
 
   // creating new product
-
-
+   
   async post(req, res) {
     try {
       const {
@@ -108,31 +114,40 @@ async getAllDiscountedProducts (req, res) {
         discountPercentage,
         size,
       } = req.body;
-      
-    
-      const image = req.files.images[0];
-    const fileName = image.filename;
-    const basePath = `${req.protocol}://${req.get("host")}/uploads`;
-    const Images = req.files.images.map(
-      (file) => `${basePath}/${file.filename}`
-    );
-    
-     // Find the category by its title
-     const categoryRegex = new RegExp(categoryTitle, "i");
-     const category = await Category.findOne({ title: { $regex: categoryRegex } });
+  
+      let images = [];
 
-
-     // Find the subcategories that belong to the selected category
-     const subcategories = await Subcategory.find({ category: category._id});
-
-     // Find the specific subcategory by its title within the subcategories array
-     const subcategoryRegex = new RegExp(subcategoryTitle, "i");
-     const subcategory = subcategories.find(sub => sub.title.match(subcategoryRegex));
-
+      if (req.files && req.files.length > 0) {
+        for (let i = 0; i < req.files.length; i++) {
+          const uploadedImage = await cloudinary.uploader.upload(req.files[i].path);
+          images.push({
+            public_id: uploadedImage.public_id,
+            url: uploadedImage.secure_url,
+          });
+        }
+      }
+      let image;
+         if (req.files.images && req.files.images.length > 0) {
+      image = req.files.images[0].url;
+    } else if (images.length > 0) {
+      image = images[0].url;
+    }
+  
+      // Find the category by its title
+      const categoryRegex = new RegExp(categoryTitle, "i");
+      const category = await Category.findOne({ title: { $regex: categoryRegex } });
+  
+      // Find the subcategories that belong to the selected category
+      const subcategories = await Subcategory.find({ category: category._id});
+  
+      // Find the specific subcategory by its title within the subcategories array
+      const subcategoryRegex = new RegExp(subcategoryTitle, "i");
+      const subcategory = subcategories.find(sub => sub.title.match(subcategoryRegex));
+  
       const product = new Product({
         name,
-        image: `${basePath}/${fileName}`,
-        images: Images,
+        images,
+        image,
         description,
         category: category.id,
         subcategory: subcategory._id,
@@ -141,10 +156,8 @@ async getAllDiscountedProducts (req, res) {
         price,
         discountPercentage,
         size,
-        
-        
       });
-
+  
       const savedProduct = await product.save();
       const discountedPrice = savedProduct.getDiscountedPrice();
       res.status(201).json({ product: savedProduct, discountedPrice });
@@ -153,6 +166,65 @@ async getAllDiscountedProducts (req, res) {
       res.status(500).json({ message: "Server error" });
     }
   }
+
+
+
+  // async post(req, res) {
+  //   try {
+  //     const {
+  //       name,
+  //       description,
+  //       categoryTitle,
+  //       subcategoryTitle,
+  //       price,
+  //       discountPercentage,
+  //       size,
+  //     } = req.body;
+      
+    
+  //     const image = req.files.images[0];
+  //   const fileName = image.filename;
+  //   const basePath = `${req.protocol}://${req.get("host")}/uploads`;
+  //   const Images = req.files.images.map(
+  //     (file) => `${basePath}/${file.filename}`
+  //   );
+    
+  //    // Find the category by its title
+  //    const categoryRegex = new RegExp(categoryTitle, "i");
+  //    const category = await Category.findOne({ title: { $regex: categoryRegex } });
+
+
+  //    // Find the subcategories that belong to the selected category
+  //    const subcategories = await Subcategory.find({ category: category._id});
+
+  //    // Find the specific subcategory by its title within the subcategories array
+  //    const subcategoryRegex = new RegExp(subcategoryTitle, "i");
+  //    const subcategory = subcategories.find(sub => sub.title.match(subcategoryRegex));
+
+  //     const product = new Product({
+  //       name,
+  //       image: `${basePath}/${fileName}`,
+  //       images: Images,
+  //       description,
+  //       category: category.id,
+  //       subcategory: subcategory._id,
+  //       categoryTitle: category.title,
+  //       subcategoryTitle: subcategory.title,
+  //       price,
+  //       discountPercentage,
+  //       size,
+        
+        
+  //     });
+
+  //     const savedProduct = await product.save();
+  //     const discountedPrice = savedProduct.getDiscountedPrice();
+  //     res.status(201).json({ product: savedProduct, discountedPrice });
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ message: "Server error" });
+  //   }
+  // }
 
     // let images = [];
       // if (req.files && req.files.length > 0) {
@@ -175,11 +247,24 @@ async getAllDiscountedProducts (req, res) {
       size
     } = req.body;
 
-    const image = req.files.images[0];
-    const fileName = image.filename;
-    const basePath = `${req.protocol}://${req.get("host")}/uploads`;
-    const images = req.files.images.map(file => `${basePath}/${file.filename}`);
+    let images = [];
 
+    if (req.files && req.files.length > 0) {
+      for (let i = 0; i < req.files.length; i++) {
+        const uploadedImage = await cloudinary.uploader.upload(req.files[i].path);
+        images.push({
+          public_id: uploadedImage.public_id,
+          url: uploadedImage.secure_url,
+        });
+      }
+    }
+
+    let image;
+    if (req.files.images && req.files.images.length > 0) {
+      image = req.files.images[0].url;
+    } else if (images.length > 0) {
+      image = images[0].url;
+    }
     // Find the category by its title
     const categoryRegex = new RegExp(categoryTitle, "i");
     const category = await Category.findOne({ title: { $regex: categoryRegex } });
@@ -198,8 +283,8 @@ async getAllDiscountedProducts (req, res) {
       // Create new product if ID is not provided
       product = new Product({
         name,
-        image: `${basePath}/${fileName}`,
         images,
+        image,
         description,
         category: category.id,
         subcategory: subcategory._id,
@@ -218,7 +303,7 @@ async getAllDiscountedProducts (req, res) {
       }
 
       product.name = name || product.name;
-      product.image = `${basePath}/${fileName}` || product.image;
+      product.image = image || product.image;
       product.images = images.length > 0 ? images : product.images;
       product.description = description || product.description;
       product.category = category._id || product.category._id;

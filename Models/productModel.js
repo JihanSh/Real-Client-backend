@@ -6,12 +6,16 @@ const productSchema = new Schema({
     type: String,
     required: [true, "Please include the product name"],
   },
-  images: [
-    {
-      type: String,
-      required: true,
+  images: [{
+    public_id:{
+       type: String,
+       //required: true,
     },
-  ],
+    url:{
+       type: String,
+       //required: true,
+    }
+  }],
   image: {
     type: String,
     default: "",
